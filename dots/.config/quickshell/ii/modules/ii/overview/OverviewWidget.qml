@@ -16,7 +16,7 @@ Item {
     required property var panelWindow
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(panelWindow.screen)
     readonly property var toplevels: ToplevelManager.toplevels
-    readonly property int workspacesShown: Config.options.overview.rows * Config.options.overview.columns
+    readonly property int workspacesShown:  Hyprland.monitors.values.length
     readonly property int workspaceGroup: Math.floor((monitor.activeWorkspace?.id - 1) / workspacesShown)
     property bool monitorIsFocused: (Hyprland.focusedMonitor?.name == monitor.name)
     property var windows: HyprlandData.windowList
@@ -73,19 +73,19 @@ Item {
             spacing: workspaceSpacing
             
             Repeater {
-                model: Config.options.overview.rows
+                model: 1
                 delegate: Row {
                     id: row
                     required property int index
                     spacing: workspaceSpacing
 
                     Repeater { // Workspace repeater
-                        model: Config.options.overview.columns
+                        model: Hyprland.monitors.values.length
                         Rectangle { // Workspace
                             id: workspace
                             required property int index
                             property int colIndex: index
-                            property int workspaceValue: root.workspaceGroup * root.workspacesShown + row.index * Config.options.overview.columns + colIndex + 1
+                            property int workspaceValue: root.workspaceGroup * workspacesShown + rowIndex *  Hyprland.monitors.values.length + colIndex + 1
                             property color defaultWorkspaceColor: ColorUtils.mix(Appearance.colors.colBackgroundSurfaceContainer, Appearance.colors.colSurfaceContainerHigh, 0.8)
                             property color hoveredWorkspaceColor: ColorUtils.mix(defaultWorkspaceColor, Appearance.colors.colLayer1Hover, 0.1)
                             property color hoveredBorderColor: Appearance.colors.colLayer2Hover
@@ -176,14 +176,15 @@ Item {
                     toplevel: modelData
                     monitorData: this.monitor
                     scale: root.scale
+                    availableWorkspaceWidth: root.workspaceImplicitWidth
+                    availableWorkspaceHeight: root.workspaceImplicitHeight
                     widgetMonitor: HyprlandData.monitors.find(m => m.id == root.monitor.id)
                     windowData: windowByAddress[address]
 
                     property bool atInitPosition: (initX == x && initY == y)
 
-                    // Offset on the canvas
-                    property int workspaceColIndex: (windowData?.workspace.id - 1) % Config.options.overview.columns
-                    property int workspaceRowIndex: Math.floor((windowData?.workspace.id - 1) % root.workspacesShown / Config.options.overview.columns)
+                    property int workspaceColIndex: (windowData?.workspace.id - 1) % Hyprland.monitors.values.length
+                    property int workspaceRowIndex: Math.floor((windowData?.workspace.id - 1) % root.workspacesShown / Hyprland.monitors.values.length)
                     xOffset: (root.workspaceImplicitWidth + workspaceSpacing) * workspaceColIndex
                     yOffset: (root.workspaceImplicitHeight + workspaceSpacing) * workspaceRowIndex
                     property real xWithinWorkspaceWidget: Math.max((windowData?.at[0] - (monitor?.x ?? 0) - monitorData?.reserved[0]) * root.scale, 0)
@@ -287,10 +288,10 @@ Item {
             Rectangle { // Focused workspace indicator
                 id: focusedWorkspaceIndicator
                 property int activeWorkspaceInGroup: monitor.activeWorkspace?.id - (root.workspaceGroup * root.workspacesShown)
-                property int rowIndex: Math.floor((activeWorkspaceInGroup - 1) / Config.options.overview.columns)
-                property int colIndex: (activeWorkspaceInGroup - 1) % Config.options.overview.columns
-                x: (root.workspaceImplicitWidth + workspaceSpacing) * colIndex
-                y: (root.workspaceImplicitHeight + workspaceSpacing) * rowIndex
+                property int activeWorkspaceRowIndex: Math.floor((activeWorkspaceInGroup - 1) / Hyprland.monitors.values.length)
+                property int activeWorkspaceColIndex: (activeWorkspaceInGroup - 1) % Hyprland.monitors.values.length
+                x: (root.workspaceImplicitWidth + workspaceSpacing) * activeWorkspaceColIndex
+                y: (root.workspaceImplicitHeight + workspaceSpacing) * activeWorkspaceRowIndex
                 z: root.windowZ
                 width: root.workspaceImplicitWidth
                 height: root.workspaceImplicitHeight
