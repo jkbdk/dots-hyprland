@@ -87,9 +87,9 @@ Item {
     WheelHandler {
         onWheel: (event) => {
             if (event.angleDelta.y < 0)
-                Hyprland.dispatch(`workspace r+1`);
+                Hyprland.dispatch(`nextdesk`);
             else if (event.angleDelta.y > 0)
-                Hyprland.dispatch(`workspace r-1`);
+                Hyprland.dispatch(`prevdesk`);
         }
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
     }
@@ -198,7 +198,7 @@ Item {
                 property int workspaceValue: workspaceGroup * root.workspacesShown + index + 1
                 implicitHeight: vertical ? Appearance.sizes.verticalBarWidth : Appearance.sizes.barHeight
                 implicitWidth: vertical ? Appearance.sizes.verticalBarWidth : Appearance.sizes.verticalBarWidth
-                onPressed: Hyprland.dispatch(`workspace ${workspaceValue}`)
+                onPressed: Hyprland.dispatch(`vdesk ${workspaceValue}`)
                 width: vertical ? undefined : workspaceButtonWidth
                 height: vertical ? workspaceButtonWidth : undefined
 

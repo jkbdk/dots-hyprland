@@ -75,7 +75,7 @@ RowLayout {
             id: searchWidthBehavior
             enabled: root.animateWidth
             NumberAnimation {
-                duration: 300
+                duration: 50
                 easing.type: Appearance.animation.elementMove.type
                 easing.bezierCurve: Appearance.animation.elementMove.bezierCurve
             }

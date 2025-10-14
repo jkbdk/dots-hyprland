@@ -125,7 +125,7 @@ Item {
                                 onPressed: {
                                     if (root.draggingTargetWorkspace === -1) {
                                         GlobalStates.overviewOpen = false
-                                        Hyprland.dispatch(`workspace ${workspace.workspaceValue}`)
+                                        Hyprland.dispatch(`vdesk ${workspaceValue}`)
                                     }
                                 }
                             }
@@ -250,7 +250,7 @@ Item {
                             window.Drag.active = false
                             root.draggingFromWorkspace = -1
                             if (targetWorkspace !== -1 && targetWorkspace !== windowData?.workspace.id) {
-                                Hyprland.dispatch(`movetoworkspacesilent ${targetWorkspace}, address:${window.windowData?.address}`)
+                                Hyprland.dispatch(`movetodesksilent ${targetWorkspace}, address:${window.windowData?.address}`)
                                 updateWindowPosition.restart()
                             }
                             else {

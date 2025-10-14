@@ -4,7 +4,7 @@ if [[ "$EUID" -eq 0 ]]; then echo "Do not run this script with sudo."; exit 1; f
 
 set -e
 
-REPO_URL="https://github.com/EisregenHaha/fedora-hyprland/"
+REPO_URL="https://github.com/jkbdk/fedora-hyprland/"
 CLONE_DIR="$HOME/.cache/fedora-hyprland"
 BRANCH="f43"
 

@@ -101,10 +101,10 @@ Scope {
                         GlobalStates.overviewOpen = false;
                     } else if (event.key === Qt.Key_Left) {
                         if (!root.searchingText)
-                            Hyprland.dispatch("workspace r-1");
+                            Hyprland.dispatch("prevdesk");
                     } else if (event.key === Qt.Key_Right) {
                         if (!root.searchingText)
-                            Hyprland.dispatch("workspace r+1");
+                            Hyprland.dispatch("nextdesk");
                     }
                 }
 
