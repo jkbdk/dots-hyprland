@@ -207,6 +207,7 @@ Item {
                     implicitWidth: workspaceButtonWidth
                     implicitHeight: workspaceButtonWidth
                     property var biggestWindow: HyprlandData.biggestWindowForWorkspace(button.workspaceValue)
+                    // property var biggestWindow: HyprlandData.biggestWindowForWorkspace((((monitor.id+1) + (3 * (HyprlandData.currentVirtualDesk-1))) + (Hyprland.monitors.values.length * (index-1))))
                     property var mainAppIconSource: Quickshell.iconPath(AppSearch.guessIcon(biggestWindow?.class), "image-missing")
 
                     StyledText { // Workspace number text

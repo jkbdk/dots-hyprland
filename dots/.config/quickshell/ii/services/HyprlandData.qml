@@ -20,6 +20,7 @@ Singleton {
     property var activeWorkspace: null
     property var monitors: []
     property var layers: ({})
+    property var currentVirtualDesk: 1
 
     function updateWindowList() {
         getClients.running = true;
@@ -64,6 +65,7 @@ Singleton {
         function onRawEvent(event) {
             // console.log("Hyprland raw event:", event.name);
             updateAll()
+            getVirtualDesk.running = true;
         }
     }
 
@@ -132,6 +134,17 @@ Singleton {
             id: activeWorkspaceCollector
             onStreamFinished: {
                 root.activeWorkspace = JSON.parse(activeWorkspaceCollector.text);
+            }
+        }
+    }
+
+    Process {
+        id: getVirtualDesk
+        command: ["hyprctl", "printdesk", "-j"]
+        stdout: StdioCollector {
+            id: virutalDeskIdCollector
+            onStreamFinished: {
+                root.currentVirtualDesk = JSON.parse(virutalDeskIdCollector.text).virtualdesk.id;
             }
         }
     }
