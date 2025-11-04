@@ -28,7 +28,7 @@ Automated setup of the Quickshell version of end_4's dotfiles on **Fedora Linux*
   This script is intended for **Fedora Workstation** and only **x64 Systems**, other non-atomic variants like KDE Plasma should also work, but they have not been tested.
   For the Arch version, visit: [end-4/dots-hyprland](https://github.com/end-4/dots-hyprland)
 
-> ✅ **Tested on Fedora 43**
+> ✅ **Tested on Fedora 43 (older branches unmaintained and probably broken)**
 
 ---
 
