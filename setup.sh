@@ -6,7 +6,7 @@ set -e
 
 REPO_URL="https://github.com/jkbdk/fedora-hyprland/"
 CLONE_DIR="$HOME/.cache/fedora-hyprland"
-BRANCH="f43"
+BRANCH="test"
 
 echo "Cloning Fedora Hyprland dotfiles (branch: $BRANCH)..."
 
