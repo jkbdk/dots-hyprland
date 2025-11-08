@@ -124,7 +124,7 @@ while true; do
     echo "6) Install/Update Fonts"
     echo ""
 
-    read -rp "Enter your choice [1-7]: " choice
+    read -rp "Enter your choice [1-6]: " choice
 
     case "$choice" in
         1)
