@@ -95,7 +95,7 @@ Scope {
     
     PamContext {
         id: pam
-        config: "hyprlock" 
+        //config: "hyprlock" 
 
         // pam_unix will ask for a response for the password prompt
         onPamMessage: {
