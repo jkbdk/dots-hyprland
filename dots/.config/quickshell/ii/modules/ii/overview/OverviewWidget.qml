@@ -85,7 +85,7 @@ Item {
                             id: workspace
                             required property int index
                             property int colIndex: index
-                            property int workspaceValue: root.workspaceGroup * workspacesShown + rowIndex *  Hyprland.monitors.values.length + colIndex + 1
+                            property int workspaceValue: root.workspaceGroup * workspacesShown + row.index *  Hyprland.monitors.values.length + colIndex + 1
                             property color defaultWorkspaceColor: ColorUtils.mix(Appearance.colors.colBackgroundSurfaceContainer, Appearance.colors.colSurfaceContainerHigh, 0.8)
                             property color hoveredWorkspaceColor: ColorUtils.mix(defaultWorkspaceColor, Appearance.colors.colLayer1Hover, 0.1)
                             property color hoveredBorderColor: Appearance.colors.colLayer2Hover
@@ -176,8 +176,8 @@ Item {
                     toplevel: modelData
                     monitorData: this.monitor
                     scale: root.scale
-                    availableWorkspaceWidth: root.workspaceImplicitWidth
-                    availableWorkspaceHeight: root.workspaceImplicitHeight
+                    property int availableWorkspaceWidth: root.workspaceImplicitWidth
+                    property int availableWorkspaceHeight: root.workspaceImplicitHeight
                     widgetMonitor: HyprlandData.monitors.find(m => m.id == root.monitor.id)
                     windowData: windowByAddress[address]
 
@@ -296,10 +296,10 @@ Item {
                 width: root.workspaceImplicitWidth
                 height: root.workspaceImplicitHeight
                 color: "transparent"
-                property bool workspaceAtLeft: colIndex === 0
-                property bool workspaceAtRight: colIndex === Config.options.overview.columns - 1
-                property bool workspaceAtTop: rowIndex === 0
-                property bool workspaceAtBottom: rowIndex === Config.options.overview.rows - 1
+                property bool workspaceAtLeft: activeWorkspaceColIndex === 0
+                property bool workspaceAtRight: activeWorkspaceColIndex === Config.options.overview.columns - 1
+                property bool workspaceAtTop: activeWorkspaceRowIndex === 0
+                property bool workspaceAtBottom: activeWorkspaceRowIndex === Config.options.overview.rows - 1
                 topLeftRadius: (workspaceAtLeft && workspaceAtTop) ? root.largeWorkspaceRadius : root.smallWorkspaceRadius
                 topRightRadius: (workspaceAtRight && workspaceAtTop) ? root.largeWorkspaceRadius : root.smallWorkspaceRadius
                 bottomLeftRadius: (workspaceAtLeft && workspaceAtBottom) ? root.largeWorkspaceRadius : root.smallWorkspaceRadius
