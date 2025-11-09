@@ -11,10 +11,12 @@ NC='\033[0m' # No Color
 
 # Get directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(pwd)"
 
 # Script paths
 INSTALL_SCRIPT="$SCRIPT_DIR/install.sh"
 FONTS_SCRIPT="$SCRIPT_DIR/fonts.sh"
+MANUAL_SCRIPT="$SCRIPT_DIR/manual-installhelper.sh"
 
 # Ask if user wants to exit
 ask_exit() {
@@ -122,9 +124,10 @@ while true; do
     echo "4) Install Dependencies"
     echo "5) Update config files with exclusions"
     echo "6) Install/Update Fonts"
+    echo "7) Manual install stuff (experimental)"
     echo ""
 
-    read -rp "Enter your choice [1-6]: " choice
+    read -rp "Enter your choice [1-7]: " choice
 
     case "$choice" in
         1)
@@ -149,6 +152,10 @@ while true; do
             ;;
         6)
             run_script "$FONTS_SCRIPT" "" || { echo -e "${RED}❌ Failed: $FONTS_SCRIPT${NC}"; }
+            ask_exit
+            ;;
+        7)
+            run_script "$MANUAL_SCRIPT" "" || { echo -e "${RED}❌ Failed: $MANUAL_SCRIPT${NC}"; }
             ask_exit
             ;;
         *)

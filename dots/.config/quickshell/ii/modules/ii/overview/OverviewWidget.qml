@@ -249,7 +249,8 @@ Item {
                             window.Drag.active = false;
                             root.draggingFromWorkspace = -1;
                             if (targetWorkspace !== -1 && targetWorkspace !== windowData?.workspace.id) {
-                                Hyprland.dispatch(`movetodesksilent ${targetWorkspace}, address:${window.windowData?.address}`);
+                                Hyprland.dispatch(`movetoworkspacesilent ${targetWorkspace}, address:${window.windowData?.address}`);
+                                //Hyprland.dispatch(`focuswindow address:${windowData.address}`);
                                 updateWindowPosition.restart();
                             } else {
                                 if (!window.windowData.floating) {
