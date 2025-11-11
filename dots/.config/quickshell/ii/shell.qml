@@ -120,5 +120,6 @@ ShellRoot {
 
         onPressed: root.cyclePanelFamily()
     }
+    LazyLoader { active: true; component: ReloadPopup {} }
 }
 
