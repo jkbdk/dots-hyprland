@@ -112,6 +112,10 @@ Scope {
         function focus(): void {
             lockContext.shouldReFocus();
         }
+
+        function isLocked(): bool {
+            return GlobalStates.screenLocked;
+        }
     }
 
     GlobalShortcut {
