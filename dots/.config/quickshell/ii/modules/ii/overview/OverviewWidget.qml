@@ -13,8 +13,8 @@ import Quickshell.Hyprland
 
 Item {
     id: root
-    required property var panelWindow
-    readonly property HyprlandMonitor monitor: Hyprland.monitorFor(panelWindow.screen)
+    required property var screen
+    readonly property HyprlandMonitor monitor: Hyprland.monitorFor(screen)
     readonly property var toplevels: ToplevelManager.toplevels
     readonly property int workspacesShown: Hyprland.monitors.values.length
     readonly property int workspaceGroup: Math.floor((monitor.activeWorkspace?.id - 1) / workspacesShown)
@@ -46,6 +46,21 @@ Item {
 
     property Component windowComponent: OverviewWindow {}
     property list<OverviewWindow> windowWidgets: []
+    
+    function getWsRow(ws) {
+        // 1-indexed workspace, 0-indexed row
+        var normalRow = Math.floor((ws - 1) / Config.options.overview.columns) % Config.options.overview.rows;
+        return (Config.options.overview.orderBottomUp ? Config.options.overview.rows - normalRow - 1 : normalRow);
+    }
+    function getWsColumn(ws) {
+        // 1-indexed workspace, 0-indexed column
+        var normalCol = (ws - 1) % Config.options.overview.columns;
+        return (Config.options.overview.orderRightLeft ? Config.options.overview.columns - normalCol - 1 : normalCol);
+    }
+    function getWsInCell(ri, ci) {
+        // 1-indexed workspace, 0-indexed row and column index
+        return (Config.options.overview.orderBottomUp ? Config.options.overview.rows - ri - 1 : ri) * Config.options.overview.columns + (Config.options.overview.orderRightLeft ? Config.options.overview.columns - ci - 1 : ci) + 1
+    }
 
     StyledRectangularShadow {
         target: overviewBackground
@@ -83,7 +98,7 @@ Item {
                             required property int index
                             property int colIndex: index
                             property int workspaceValue: root.workspaceGroup * workspacesShown + row.index * Hyprland.monitors.values.length + colIndex + 1
-                            property color defaultWorkspaceColor: ColorUtils.mix(Appearance.colors.colBackgroundSurfaceContainer, Appearance.colors.colSurfaceContainerHigh, 0.8)
+                            property color defaultWorkspaceColor: Appearance.colors.colSurfaceContainerLow
                             property color hoveredWorkspaceColor: ColorUtils.mix(defaultWorkspaceColor, Appearance.colors.colLayer1Hover, 0.1)
                             property color hoveredBorderColor: Appearance.colors.colLayer2Hover
                             property bool hoveredWhileDragging: false
@@ -158,12 +173,12 @@ Item {
                 model: ScriptModel {
                     values: {
                         // console.log(JSON.stringify(ToplevelManager.toplevels.values.map(t => t), null, 2))
-                        return [...ToplevelManager.toplevels.values.filter(toplevel => {
-                                const address = `0x${toplevel.HyprlandToplevel?.address}`;
-                                var win = windowByAddress[address];
-                                const inWorkspaceGroup = (root.workspaceGroup * root.workspacesShown < win?.workspace?.id && win?.workspace?.id <= (root.workspaceGroup + 1) * root.workspacesShown);
-                                return inWorkspaceGroup;
-                            })].reverse();
+                        return ToplevelManager.toplevels.values.filter((toplevel) => {
+                            const address = `0x${toplevel.HyprlandToplevel?.address}`
+                            var win = windowByAddress[address]
+                            const inWorkspaceGroup = (root.workspaceGroup * root.workspacesShown < win?.workspace?.id && win?.workspace?.id <= (root.workspaceGroup + 1) * root.workspacesShown)
+                            return inWorkspaceGroup;
+                        })
                     }
                 }
                 delegate: OverviewWindow {
@@ -184,6 +199,9 @@ Item {
 
                     property int workspaceColIndex: (windowData?.workspace.id - 1) % Hyprland.monitors.values.length
                     property int workspaceRowIndex: Math.floor((windowData?.workspace.id - 1) % root.workspacesShown / Hyprland.monitors.values.length)
+                    // Offset on the canvas
+                    //property int workspaceColIndex: getWsColumn(windowData?.workspace.id)
+                    //property int workspaceRowIndex: getWsRow(windowData?.workspace.id)
                     xOffset: (root.workspaceImplicitWidth + workspaceSpacing) * workspaceColIndex
                     yOffset: (root.workspaceImplicitHeight + workspaceSpacing) * workspaceRowIndex
                     property real xWithinWorkspaceWidget: Math.max((windowData?.at[0] - (monitor?.x ?? 0) - monitorData?.reserved[0]) * root.scale, 0)
@@ -279,7 +297,7 @@ Item {
                         StyledToolTip {
                             extraVisibleCondition: false
                             alternativeVisibleCondition: dragArea.containsMouse && !window.Drag.active
-                            text: `${windowData.title}\n[${windowData.class}] ${windowData.xwayland ? "[XWayland] " : ""}`
+                            text: `${windowData?.title}\n[${windowData?.class}] ${windowData?.xwayland ? "[XWayland] " : ""}`
                         }
                     }
                 }

@@ -4,6 +4,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import Quickshell.Wayland
 import Quickshell.Hyprland
 
 /**
@@ -21,6 +22,30 @@ Singleton {
     property var monitors: []
     property var layers: ({})
     property var currentVirtualDesk: 1
+
+    // Convenient stuff
+
+    function toplevelsForWorkspace(workspace) {
+        return ToplevelManager.toplevels.values.filter(toplevel => {
+            const address = `0x${toplevel.HyprlandToplevel?.address}`;
+            var win = HyprlandData.windowByAddress[address];
+            return win?.workspace?.id === workspace;
+        })
+    }
+
+    function hyprlandClientsForWorkspace(workspace) {
+        return root.windowList.filter(win => win.workspace.id === workspace);
+    }
+
+    function clientForToplevel(toplevel) {
+        if (!toplevel || !toplevel.HyprlandToplevel) {
+            return null;
+        }
+        const address = `0x${toplevel?.HyprlandToplevel?.address}`;
+        return root.windowByAddress[address];
+    }
+
+    // Internals
 
     function updateWindowList() {
         getClients.running = true;
@@ -64,6 +89,7 @@ Singleton {
 
         function onRawEvent(event) {
             // console.log("Hyprland raw event:", event.name);
+            if (["openlayer", "closelayer", "screencast"].includes(event.name)) return;
             updateAll()
             getVirtualDesk.running = true;
         }
