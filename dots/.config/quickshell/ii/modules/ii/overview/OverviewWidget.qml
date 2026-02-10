@@ -16,8 +16,11 @@ Item {
     required property var screen
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(screen)
     readonly property var toplevels: ToplevelManager.toplevels
-    readonly property int workspacesShown: Hyprland.monitors.values.length
-    readonly property int workspaceGroup: Math.floor((monitor.activeWorkspace?.id - 1) / workspacesShown)
+    // readonly property int workspacesShown: Hyprland.monitors.values.length
+    // Clamp to avoid lock-screen temp workspace (2147483647 - N) leaking into UI
+    readonly property int effectiveActiveWorkspaceId: Math.max(1, Math.min(100, monitor?.activeWorkspace?.id ?? 1))
+    readonly property int workspacesShown: Config.options.overview.rows * Config.options.overview.columns
+    readonly property int workspaceGroup: Math.floor((effectiveActiveWorkspaceId - 1) / workspacesShown)
     property bool monitorIsFocused: (Hyprland.focusedMonitor?.name == monitor.name)
     property var windows: HyprlandData.windowList
     property var windowByAddress: HyprlandData.windowByAddress
@@ -305,11 +308,15 @@ Item {
 
             Rectangle { // Focused workspace indicator
                 id: focusedWorkspaceIndicator
-                property int activeWorkspaceInGroup: monitor.activeWorkspace?.id - (root.workspaceGroup * root.workspacesShown)
-                property int activeWorkspaceRowIndex: Math.floor((activeWorkspaceInGroup - 1) / Hyprland.monitors.values.length)
-                property int activeWorkspaceColIndex: (activeWorkspaceInGroup - 1) % Hyprland.monitors.values.length
-                x: (root.workspaceImplicitWidth + workspaceSpacing) * activeWorkspaceColIndex
-                y: (root.workspaceImplicitHeight + workspaceSpacing) * activeWorkspaceRowIndex
+                // property int activeWorkspaceInGroup: monitor.activeWorkspace?.id - (root.workspaceGroup * root.workspacesShown)
+                // property int activeWorkspaceRowIndex: Math.floor((activeWorkspaceInGroup - 1) / Hyprland.monitors.values.length)
+                // property int activeWorkspaceColIndex: (activeWorkspaceInGroup - 1) % Hyprland.monitors.values.length
+                // x: (root.workspaceImplicitWidth + workspaceSpacing) * activeWorkspaceColIndex
+                // y: (root.workspaceImplicitHeight + workspaceSpacing) * activeWorkspaceRowIndex
+                property int rowIndex: getWsRow(root.effectiveActiveWorkspaceId)
+                property int colIndex: getWsColumn(root.effectiveActiveWorkspaceId)
+                x: (root.workspaceImplicitWidth + workspaceSpacing) * colIndex
+                y: (root.workspaceImplicitHeight + workspaceSpacing) * rowIndex
                 z: root.windowZ
                 width: root.workspaceImplicitWidth
                 height: root.workspaceImplicitHeight
